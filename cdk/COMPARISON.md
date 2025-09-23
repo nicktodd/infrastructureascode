@@ -218,6 +218,53 @@ tvShow.addMethod('PUT');    // PUT /tvshows/{id}
 tvShow.addMethod('DELETE'); // DELETE /tvshows/{id}
 ```
 
+### Custom L3 (Higher Abstraction) Implementation
+```typescript
+// Using a completely custom construct that encapsulates the entire CRUD service
+const tvShowsService = new CrudService(this, 'TVShowsCrudService', {
+  entityName: 'TVShows',
+  tableName: 'TVShows-L3',
+  apiPath: 'tvshows',
+  lambdaCodePath: path.join(__dirname, '../src/lambda-l3'),
+  stageName: 'prod',
+  enableAdvancedFeatures: true
+});
+
+// All resources and configurations are managed internally by the construct
+// Includes automatic CloudWatch dashboard creation and other advanced features
+```
+
+## Custom L3 Constructs
+
+Custom L3 constructs represent the highest level of abstraction in AWS CDK. In our example, we've created a `CrudService` construct that:
+
+1. Encapsulates all resources needed for a CRUD API (DynamoDB, Lambda, API Gateway)
+2. Provides a simple, consistent interface for creating these resources
+3. Adds additional features like CloudWatch dashboards automatically
+4. Enforces best practices with smart defaults
+5. Reduces stack code to just a few lines
+
+### Example Usage
+
+```typescript
+// Custom L3 construct usage - entire infrastructure in just a few lines
+const tvShowsService = new CrudService(this, 'TVShowsCrudService', {
+  entityName: 'TVShows',
+  tableName: 'TVShows-L3',
+  apiPath: 'tvshows',
+  lambdaCodePath: path.join(__dirname, '../src/lambda-l3'),
+  stageName: 'prod',
+  enableAdvancedFeatures: true
+});
+```
+
+### Benefits
+- **Reusability**: Create multiple CRUD APIs with consistent architecture
+- **Encapsulation**: Internal implementation details are hidden from consumers
+- **Maintenance**: Update the construct once to improve all services that use it
+- **Best Practices**: Built-in monitoring, security, and performance optimizations
+- **Documentation**: Self-documenting through property interfaces with JSDoc
+
 ## When to Use Each Level
 
 ### L1 Constructs
@@ -236,3 +283,9 @@ tvShow.addMethod('DELETE'); // DELETE /tvshows/{id}
 - For rapid development of production-ready applications
 - When you want built-in best practices
 - For complex multi-resource configurations
+
+### Custom L3 Constructs
+- When implementing organization-specific patterns repeatedly
+- For enforcing architectural standards across teams
+- When building domain-specific abstractions for your business
+- When you want to share infrastructure components as a library

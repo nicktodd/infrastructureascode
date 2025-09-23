@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Example Lambda CLoudformation Deployment'
+Parameters:
+  UploadBucketName:
+    AllowedPattern: ^[0-9a-zA-Z\.]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    Default: azuredevops.conygre.com
+    Type: String
+
+  UploadS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    Default: samplestepfunctions
+    Type: String
+
+
+
+Resources:
+  
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole 
+      Path: /
+  
+  MyFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Example Lambda Deployed via Cloudformation
+      Handler: basic_lambda.handler
+      Runtime: python3.8
+      Role: !GetAtt 'LambdaRole.Arn'
+      Timeout: 300
+      Code:
+        S3Bucket: !Ref 'UploadBucketName'
+        S3Key: !Sub '${UploadS3KeyPrefix}/lambda.zip'
+      
+
+Outputs:
+   HelloLambdaArn:
+    Description: Arn of HelloWorld Lambda
+    Value: !GetAtt MyFunction.Arn
+    Export: 
+      Name: HelloLambdaArn

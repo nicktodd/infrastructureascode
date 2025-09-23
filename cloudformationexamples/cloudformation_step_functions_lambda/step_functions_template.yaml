@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Step Functions State Machine Deployment.
+
+Parameters:
+  UploadBucketName:
+    AllowedPattern: ^[0-9a-zA-Z\.]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    Default: azuredevops.conygre.com
+    Type: String
+
+  UploadS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    Default: samplestepfunctions
+    Type: String
+
+
+Resources:
+  MyStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: HelloWorldStateMachine
+      DefinitionS3Location: 
+        Bucket: !Ref 'UploadBucketName'
+        Key: !Sub '${UploadS3KeyPrefix}/statemachine.json'
+      DefinitionSubstitutions:
+        HelloLambdaArn: !ImportValue HelloLambdaArn
+      RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/service-role/StatesExecutionRole-eu-west-1
+

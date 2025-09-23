@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Example Lambda CLoudformation Deployment'
+Parameters:
+  UploadBucketName:
+    AllowedPattern: ^[0-9a-zA-Z\.]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    Default: azuredevops.conygre.com
+    Type: String
+  UploadS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    Default: samplenestedstack
+    Type: String
+Resources:
+  NetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TimeoutInMinutes: 15
+      TemplateURL: !Sub "https://${UploadBucketName}.s3.${AWS::Region}.amazonaws.com/${UploadS3KeyPrefix}/network_template.yaml"
+
+
+  LambdaStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TimeoutInMinutes: 15
+      TemplateURL: !Sub "https://${UploadBucketName}.s3.${AWS::Region}.amazonaws.com/${UploadS3KeyPrefix}/lambda_template.yaml"
+      Parameters:
+        UploadBucketName: !Ref UploadBucketName
+        UploadS3KeyPrefix: !Ref UploadS3KeyPrefix
+        PublicSubnet: !GetAtt NetworkStack.Outputs.PublicSubnet1
+        SecurityGroup: !GetAtt NetworkStack.Outputs.NoIngressSecurityGroup
+
+        
+      

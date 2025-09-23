@@ -1,0 +1,11 @@
+{
+    "Comment": "A state machine that runs a simple hello world lambda deployed via another template.",
+    "StartAt": "RunHelloWorld",
+    "States": {
+        "RunHelloWorld": {
+            "Type": "Task",
+            "Resource": "${HelloLambdaArn}",
+            "End": true
+        }
+   }
+}

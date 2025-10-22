@@ -56,8 +56,95 @@ L3 constructs are high-level patterns that combine multiple resources. They:
 * `npm run build`   compile TypeScript to JS
 * `npm run watch`   watch for changes and compile
 * `npm run test`    perform the Jest unit tests
-* `npx cdk deploy TVShowsL1Stack`  deploy the L1 stack to your default AWS account/region
-* `npx cdk deploy TVShowsL2Stack`  deploy the L2 stack to your default AWS account/region
-* `npx cdk deploy TVShowsL3Stack`  deploy the L3 stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+* `cdk deploy TVShowsL1Stack`  deploy the L1 stack to your default AWS account/region
+* `cdk deploy TVShowsL2Stack`  deploy the L2 stack to your default AWS account/region
+* `cdk deploy TVShowsL3Stack`  deploy the L3 stack to your default AWS account/region
+* `cdk diff`    compare deployed stack with current state
+* `cdk synth`   emits the synthesized CloudFormation template
+
+## Building and Deploying TypeScript Lambdas
+
+The Lambda functions for L1, L2, and L3 have been converted to TypeScript and updated to use AWS SDK v3. This ensures compatibility with the latest Lambda runtime environments. Follow these steps to build and deploy them:
+
+### Building TypeScript Lambdas
+1. Ensure you have TypeScript installed globally or in your project dependencies.
+2. Run the following command to compile the TypeScript files to JavaScript:
+   ```bash
+   npm run build
+   ```
+
+### Deploying TypeScript Lambdas
+Use the AWS CDK to deploy the stacks containing the TypeScript-based Lambdas:
+
+- Deploy the L1 stack:
+  ```bash
+  cdk deploy TVShowsL1Stack
+  ```
+- Deploy the L2 stack:
+  ```bash
+  cdk deploy TVShowsL2Stack
+  ```
+- Deploy the L3 stack:
+  ```bash
+  cdk deploy TVShowsL3Stack
+  ```
+
+## API Endpoints and CRUD Operations
+
+All three Lambda implementations (L1, L2, L3) now support full CRUD operations:
+
+### Available Endpoints
+
+- **GET /tvshows** - List all TV shows
+- **GET /tvshows/{id}** - Get a specific TV show by ID
+- **POST /tvshows** - Create a new TV show
+- **DELETE /tvshows/{id}** - Delete a TV show by ID
+
+### Example Usage
+
+After deployment, you can test the API using tools like curl or Postman:
+
+```bash
+# Get the API URL from deployment output
+API_URL="https://your-api-id.execute-api.region.amazonaws.com/prod"
+
+# List all TV shows
+curl -X GET $API_URL/tvshows
+
+# Create a new TV show
+curl -X POST $API_URL/tvshows \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "breaking-bad-01", 
+    "title": "Breaking Bad", 
+    "genre": "Crime Drama", 
+    "year": 2008, 
+    "rating": 9.5
+  }'
+
+# Get a specific TV show
+curl -X GET $API_URL/tvshows/breaking-bad-01
+
+# Delete a TV show
+curl -X DELETE $API_URL/tvshows/breaking-bad-01
+```
+
+### Request/Response Format
+
+**POST /tvshows** expects a JSON body with the following structure:
+```json
+{
+  "id": "unique-show-id",
+  "title": "Show Title",
+  "genre": "Genre (optional)",
+  "year": 2024,
+  "rating": 8.5
+}
+```
+
+All responses include appropriate HTTP status codes:
+- `200` - Success
+- `201` - Created (for POST requests)
+- `400` - Bad Request (missing required fields)
+- `404` - Not Found (for GET/DELETE of non-existent items)
+- `500` - Internal Server Error

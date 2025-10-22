@@ -77,7 +77,7 @@ export class CrudService extends Construct {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       // Advanced features enabled by default in the L3 construct
-      pointInTimeRecovery: props.enableAdvancedFeatures !== false,
+      pointInTimeRecoverySpecification: props.enableAdvancedFeatures !== false ? { pointInTimeRecoveryEnabled: true } : undefined,
       timeToLiveAttribute: 'ttl',
       encryption: dynamodb.TableEncryption.AWS_MANAGED,
       stream: props.enableAdvancedFeatures !== false ? 
@@ -105,17 +105,14 @@ export class CrudService extends Construct {
     });
 
     // Grant table permissions to Lambda
-    this.table.grantReadWriteData(this.handler);
-
-    // Create the API Gateway
+    this.table.grantReadWriteData(this.handler);    // Create the API Gateway
     this.api = new apigateway.RestApi(this, `${props.entityName}Api`, {
       restApiName: `${props.entityName}-API`,
       description: `${props.entityName} CRUD API using L3 pattern construct`,
       deployOptions: {
         stageName: props.stageName || 'prod',
         metricsEnabled: props.enableAdvancedFeatures !== false,
-        loggingLevel: props.enableAdvancedFeatures !== false ?
-          apigateway.MethodLoggingLevel.INFO : undefined,
+        // Removed loggingLevel to avoid CloudWatch Logs role ARN requirement
         tracingEnabled: props.enableAdvancedFeatures !== false
       },
       defaultCorsPreflightOptions: props.enableAdvancedFeatures !== false ? {

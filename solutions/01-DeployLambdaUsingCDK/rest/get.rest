@@ -1,0 +1,2 @@
+GET https://acn3o5ps1i.execute-api.eu-west-1.amazonaws.com/prod/actors/bryan-cranston
+Content-Type: application/json

@@ -1,0 +1,11 @@
+POST https://acn3o5ps1i.execute-api.eu-west-1.amazonaws.com/prod/actors
+Content-Type: application/json
+
+{
+  "id": "bryan-cranston",
+  "name": "Bryan Cranston",
+  "age": 67,
+  "nationality": "American",
+  "knownFor": ["Breaking Bad", "Malcolm in the Middle"],
+  "isActive": true
+}

@@ -252,10 +252,12 @@ describe('TV Actors API', () => {
 });
 ```
 
-**Run the test** to see it fail (Red):
+**Run the test** to see if it passes:
 ```powershell
 npm test
 ```
+It should pass but there are no assertions so it isn't actually doing anything. So now, let's add the listAll method into the Lambda and implement the test.
+
 
 **Now implement** the ActorsController class and `listAll()` method in `src/index.ts`:
 
